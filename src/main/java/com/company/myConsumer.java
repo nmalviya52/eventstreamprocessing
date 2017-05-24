@@ -18,32 +18,15 @@ public class myConsumer implements Consumer {
             executors[i] = Executors.newSingleThreadExecutor();
         }
     }
-    class mythread implements Runnable{
-        UUID taskId;
-        UUID clientId;
-        public mythread(ExecutableTask e) {
-            this.taskId= e.getTaskID();
-            this.clientId=e.getClientID();
-        }
-        @Override
-        public void run() {
-            System.out.println(String.format("Executed   event{client:%s, task:%s}", clientId, taskId));
-        }
-    }
-
     public void consume(ExecutableTask e)
     {
         long curtimesec=System.currentTimeMillis();
-        if(cache.containsValue(e.getTaskID()))
-        {
-            cache.insert(e.getTaskID(),curtimesec);
-        }
-        else
+        if(!cache.containsValue(e.getTaskID()))
         {
             cache.insert(e.getTaskID(),curtimesec);
             int hashval=e.getClientID().hashCode()%10;
             // same ClientID task are submitted to same ExecutorService
-            executors[hashval].submit(new Thread(new mythread(e)));
+            executors[hashval].submit(e::execute);
         }
     }
 }

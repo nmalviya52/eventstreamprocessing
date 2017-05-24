@@ -39,7 +39,6 @@ public class Producer {
     private static Consumer getConsumer() {
         c=new myConsumer();
         return c;
-//        return Consumer.ExecutableTask::execute;
     }
 
 

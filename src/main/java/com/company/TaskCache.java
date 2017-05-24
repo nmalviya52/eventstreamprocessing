@@ -3,25 +3,18 @@ package com.company;
 /**
  * Created by naresh.m on 23/05/17.
  */
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.google.common.cache.*;
+
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class TaskCache<T,D> {
 
-    LoadingCache<T,D> lastreqtime;
-
+    Cache<T,D> lastreqtime;
     public TaskCache(long duration)
     {
-        lastreqtime=CacheBuilder.newBuilder().expireAfterWrite(duration, TimeUnit.SECONDS).build(new CacheLoader<T, D>() {
-            @Override
-            public D load(T t) throws Exception {
-                throw new Exception();
-            }
-        });
+        lastreqtime=CacheBuilder.newBuilder().expireAfterAccess(duration, TimeUnit.SECONDS).build();
     }
 
     void insert(T taskId,D curtimesec)
@@ -37,13 +30,4 @@ public class TaskCache<T,D> {
             return false;
     }
 
-    D getValue(T taskId)
-    {
-        try {
-            return (D)lastreqtime.get(taskId);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
